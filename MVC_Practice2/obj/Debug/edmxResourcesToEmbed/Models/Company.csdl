@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="VideosModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="MyCustomer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Age" Type="Int32" />
+    <NavigationProperty Name="MyOrders" Relationship="Self.FK_MyOrders_MyCustomers" FromRole="MyCustomers" ToRole="MyOrders" />
+  </EntityType>
+  <EntityType Name="MyOrder">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="Status" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="CustomerId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="MyCustomer" Relationship="Self.FK_MyOrders_MyCustomers" FromRole="MyOrders" ToRole="MyCustomers" />
+  </EntityType>
+  <Association Name="FK_MyOrders_MyCustomers">
+    <End Role="MyCustomers" Type="Self.MyCustomer" Multiplicity="1" />
+    <End Role="MyOrders" Type="Self.MyOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MyCustomers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="MyOrders">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="VideosEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="MyCustomers" EntityType="Self.MyCustomer" />
+    <EntitySet Name="MyOrders" EntityType="Self.MyOrder" />
+    <AssociationSet Name="FK_MyOrders_MyCustomers" Association="Self.FK_MyOrders_MyCustomers">
+      <End Role="MyCustomers" EntitySet="MyCustomers" />
+      <End Role="MyOrders" EntitySet="MyOrders" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

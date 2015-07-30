@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="VideosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="MyCustomers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Age" Type="int" />
+  </EntityType>
+  <EntityType Name="MyOrders">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OrderDate" Type="date" Nullable="false" />
+    <Property Name="Status" Type="nchar" MaxLength="10" Nullable="false" />
+    <Property Name="CustomerId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_MyOrders_MyCustomers">
+    <End Role="MyCustomers" Type="Self.MyCustomers" Multiplicity="1" />
+    <End Role="MyOrders" Type="Self.MyOrders" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MyCustomers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="MyOrders">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="VideosModelStoreContainer">
+    <EntitySet Name="MyCustomers" EntityType="Self.MyCustomers" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="MyOrders" EntityType="Self.MyOrders" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_MyOrders_MyCustomers" Association="Self.FK_MyOrders_MyCustomers">
+      <End Role="MyCustomers" EntitySet="MyCustomers" />
+      <End Role="MyOrders" EntitySet="MyOrders" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

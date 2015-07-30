@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "EasyUI_Index";
+}
+
+<h2>EasyUI_Index</h2>
+@section headsection
+{
+        <script type="text/javascript">
+            function formatterdate(val, row) {
+                if (val != null) {
+                    var date = new Date(parseInt(val.replace("/Date(", "").replace(")/", ""), 10));
+                    var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                    var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                    var hours = date.getHours();
+                    var minutes = date.getMinutes();
+                    var seconds = date.getSeconds();
+                    // var milliseconds = date.getMilliseconds();
+                    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+                }
+            }
+            $(function () {
+
+                $("#tbList").datagrid({
+                    view: detailview,
+                    detailFormatter: function (index, row) {
+                        return '<div class="ddv"></div>';
+                    },
+                    onExpandRow: function(index,row){
+                        var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');
+                        ddv.panel({
+                            border:false,
+                            cache:true,
+                            href: '/Order/Retrieve_Single_Order/' + index,
+                            onLoad:function(){
+                                $('#dg').datagrid('fixDetailRowHeight',index);
+                                $('#dg').datagrid('selectRow',index);
+                                $('#dg').datagrid('getRowDetail',index).find('form').form('load',row);
+                            }
+                        });
+                        $('#dg').datagrid('fixDetailRowHeight',index);
+                    },
+                    url: "Order/GetPageList",
+
+                    width: 580,
+                    height: 530,
+                    striped: true,
+                    title: "Orders data",
+                    rownumbers: true,
+                    columns: [[
+                        {
+                            field: "OrderId"
+                            
+                        },
+                        { field: 'OrderTime', title: 'OrderTime', formatter: formatterdate },
+                    { field: 'Status', title: 'Status', width: 100 },
+            
+            { field: 'CustomerName', title: 'CustomerName' },
+                    ]],
+                    toolbar: [{
+                        iconCls: 'icon-edit',
+                        text: 'Edit',
+                        handler: function () { alert('编辑按钮') }
+                    }, '-', {
+                        iconCls: 'icon-remove',
+                        text: 'Delete',
+                        handler: function () {
+                            //$('#tbList').datagrid('deleteRow', 1);// 索引从0开始
+                            //$('#tbList').datagrid('reload');刷新一下
+                            var row = $('#tbList').datagrid('getSelected');
+                            if (!row) {
+                                $.messager.alert('Wrong operation', 'You haven\'t choose row yet ', 'error');
+                            }
+                            else {
+                                $.messager.confirm('Warning', 'Do you want to delele this row？', function (r) {
+                                    if (r) {
+                                        // delete操作;
+                                        
+                                        alert(row.OrderId);
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "/Order/Del/" + row.OrderId,
+                                           
+
+                                            success: function (msg) {
+
+                                                $('#tbList').datagrid('reload');
+
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+
+                        }
+                    }],
+                    pagination: true,
+                    singleSelect: true,
+                    pageSize: 3,
+                    pageList: [3, 10, 30, 40, 50]
+                })
+            })
+
+        </script>
+}
+
+<table id="tbList" class="easyui-datagrid" title="Basic DataGrid">
+    <!--<tr>
+        <th>DatabaseID</th>
+        <th>Timestamp</th>
+        <th>Subject</th>
+        <th>Verb</th>
+        <th>Object</th>
+    </tr>-->
+</table>

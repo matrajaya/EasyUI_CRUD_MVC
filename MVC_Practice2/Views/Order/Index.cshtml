@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "订单列表页面";
+}
+
+@section headsection{
+    <script type="text/javascript">
+        $(function(){
+            loadPage(1);
+        });
+
+        function loadPage(pageIndex) {
+            
+            $.ajax({
+                type: "GET",
+                url: "/Order/GetPageList/" + pageIndex,
+                cache: false,
+                dataType:"json",
+                success: function (msg) {
+                    // alert(msg);
+                    var myTemplate = $.templates("#Templ_Msg_Table");
+                    var html = myTemplate.render(msg);
+                    $("#list_order").append(html);
+                }
+            });
+        }
+        $.views.converters("realdate", function (val) {
+            var d = jsonDateFormat(val);
+            return d;
+        });
+        function jsonDateFormat(cellval) {
+            var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            return date.getFullYear() + "/" + month + "/" + currentDate;
+        }
+        function del(id,a){
+            $.ajax({
+                type: "POST",
+                url: "/Order/Del/",
+                data:"id="+id,            
+                
+                success: function (msg) {
+                    
+                    $(a).parent().parent().remove();
+                    alert("id="+id+" is deleted"+msg);
+                    
+                }
+            });
+        }
+    </script>
+
+<script id="Templ_Msg_Table" type="text/x-jsrender">
+
+    <tr>
+        <td>{{:OrderId}}</td>
+        <td>{{realdate:OrderTime}}</td>
+        <td>{{:Status}}</td>       
+        <td>{{:CustomerName}}</td>
+        <td><a href="javascript:void(0)" onclick="del({{:OrderId}},this)">删除</a></td>
+     
+    </tr>
+</script>
+
+}
+<h2>Index</h2>
+
+
+
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">订单列表</div>
+
+    <!-- Table -->
+    <table id="list_order" class="table">
+        <tr>
+            <th>订单ID</th>
+            <th>下单时间</th>
+            <th>状态</th>
+            <th>客户名</th>
+            <th>操作</th>
+        </tr>
+    </table>
+</div>
