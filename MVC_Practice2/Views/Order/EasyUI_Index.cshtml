@@ -16,46 +16,54 @@
                     var minutes = date.getMinutes();
                     var seconds = date.getSeconds();
                     // var milliseconds = date.getMilliseconds();
-                    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+                    //return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+                    //当前需要这种时间格式MM/dd/yyyy hh:mm:ss
+                    return month + "/" + day + "/" +date.getFullYear()+" "+ hours + ":" + minutes + ":" + seconds;
                 }
             }
             $(function () {
 
                 $("#tbList").datagrid({
+                    title: 'DataGrid - DetailView',
                     view: detailview,
+                    fitColumns: true,
+                    nowrap: false,
                     detailFormatter: function (index, row) {
-                        return '<div class="ddv"></div>';
+                        return '<div class="record_info"></div>';
                     },
                     onExpandRow: function(index,row){
-                        var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');
+                        var ddv = $(this).datagrid('getRowDetail', index).find('div.record_info');
+                        
                         ddv.panel({
                             border:false,
                             cache:true,
-                            href: '/Order/Retrieve_Single_Order/' + index,
+                            href: '/Order/Retrieve_Single_Order/' + row.OrderId+"?index="+index,
                             onLoad:function(){
-                                $('#dg').datagrid('fixDetailRowHeight',index);
-                                $('#dg').datagrid('selectRow',index);
-                                $('#dg').datagrid('getRowDetail',index).find('form').form('load',row);
-                            }
-                        });
-                        $('#dg').datagrid('fixDetailRowHeight',index);
-                    },
-                    url: "Order/GetPageList",
+                                $('#tbList').datagrid('fixDetailRowHeight', index);
+                                $('#tbList').datagrid('selectRow', index);
+                                $('#tbList').datagrid('getRowDetail',index).find('form').form('load',row);
+                                console.log(row);
+                                //$("#dt_box").datetimebox('setValue', '10/08/1990 23:15:10'); 
+                                $("#dt_box").datetimebox('setValue',formatterdate(row.OrderTime,null));
 
-                    width: 580,
-                    height: 530,
+                            }
+
+                        });
+                        $('#tbList').datagrid('fixDetailRowHeight',index);
+
+                    },
+                    url: "/Order/GetPageList",
+                    width: 700,
+                    height:600,
+
                     striped: true,
-                    title: "Orders data",
+                    
                     rownumbers: true,
                     columns: [[
-                        {
-                            field: "OrderId"
-                            
-                        },
-                        { field: 'OrderTime', title: 'OrderTime', formatter: formatterdate },
-                    { field: 'Status', title: 'Status', width: 100 },
-            
-            { field: 'CustomerName', title: 'CustomerName' },
+                        { field: "OrderId",width:50},
+                        { field: 'OrderTime', title: 'OrderTime', formatter: formatterdate, width: 50 },
+                        { field: 'Status', title: 'Status', width: 50 },
+                        { field: 'CustomerName', title: 'CustomerName', width: 50 },
                     ]],
                     toolbar: [{
                         iconCls: 'icon-edit',
@@ -101,10 +109,15 @@
                 })
             })
 
+            function cancelItem(index) {
+
+                $('#tbList').datagrid('collapseRow', index);
+
+            }
         </script>
 }
 
-<table id="tbList" class="easyui-datagrid" title="Basic DataGrid">
+<table id="tbList" >
     <!--<tr>
         <th>DatabaseID</th>
         <th>Timestamp</th>
@@ -113,3 +126,18 @@
         <th>Object</th>
     </tr>-->
 </table>
+<style type="text/css">
+    form {
+        margin: 0;
+        padding: 0;
+    }
+
+    .dv-table td {
+        border: 0;
+    }
+
+    .dv-table input {
+        border: 1px solid #ccc;
+    }
+</style>
+

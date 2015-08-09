@@ -1,26 +1,55 @@
-﻿
+﻿@model MVC_Practice2.Models.MyOrder
+
 @{
     Layout = null;
 }
-
-<form method="post">
+@using MVC_Practice2.Models;
+<form id="order_detail" method="post" action="/Order/Update">
+    <input type="hidden" name="Id" value="@Model.Id">
     <table class="dv-table" style="width:100%;border:1px solid #ccc;padding:5px;margin-top:5px;">
         <tr>
-            <td>First Name</td>
-            <td><input name="firstname" class="easyui-validatebox" required="true"></input></td>
-            <td>Last Name</td>
-            <td><input name="lastname" class="easyui-validatebox" required="true"></input></td>
+            <td>OrderDate</td>
+            <td><input id="dt_box" class="easyui-datetimebox" name="OrderTime" type="datetime" style="width:200px"></td>
+            <td>Status</td>
+            <td><input name="Status" type="text" value="@Model.Status" class="easyui-validatebox"  style="width:100px"></td>
         </tr>
         <tr>
-            <td>Phone</td>
-            <td><input name="phone"></input></td>
-            <td>Email</td>
-            <td><input name="email" class="easyui-validatebox" validtype="email"></input></td>
+            <td>CustomerName</td>
+            <td colspan="3">
+                <select name="CustomerId">
+                    @foreach (MyCustomer customer in ViewBag.Customer_list as List<MyCustomer>)
+                    {
+                        if (customer.Id == Model.MyCustomer.Id)
+                        {
+                            <option value="@customer.Id" selected="selected">@customer.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@customer.Id">@customer.Name</option>
+                        }
+
+                    }
+
+                </select>
+            </td>
         </tr>
     </table>
     <div style="padding:5px 0;text-align:right;padding-right:30px">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="saveItem(2)">Save</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="cancelItem(2)">Cancel</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="save()">Save</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="cancelItem(@ViewBag.Index)">Cancel</a>
     </div>
 </form>
+<script type="text/javascript">
+    function save() {
 
+        $("#order_detail").submit();
+    }
+    
+
+
+
+
+
+
+
+</script>
