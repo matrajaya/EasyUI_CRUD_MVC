@@ -44,13 +44,14 @@
                                 $('#tbList').datagrid('getRowDetail',index).find('form').form('load',row);
                                 console.log(row);
                                 //$("#dt_box").datetimebox('setValue', '10/08/1990 23:15:10'); 
-                                $("#dt_box").datetimebox('setValue',formatterdate(row.OrderTime,null));
-
+                                $("#OrderDate").datetimebox('setValue', formatterdate(row.OrderTime, null));
+                                $.validator.unobtrusive.parse("#order_detail");
+                                
                             }
 
                         });
                         $('#tbList').datagrid('fixDetailRowHeight',index);
-
+                        jQuery.validator.unobtrusive.parse();
                     },
                     url: "/Order/GetPageList",
                     width: 700,

@@ -2,21 +2,47 @@
 
 @{
     Layout = null;
+    Html.EnableClientValidation();
 }
 @using MVC_Practice2.Models;
-<form id="order_detail" method="post" action="/Order/Update">
+
+<script type="text/javascript">
+    $(function(){
+        //$.validator.unobtrusive.parse("#order_detail");
+        //jQuery.validator.unobtrusive.parse();
+        //alert("load finished");
+    });
+
+
+</script>
+
+    @using (Html.BeginForm("Update", "Order", FormMethod.Post, new { id = "order_detail" })) { 
     <input type="hidden" name="Id" value="@Model.Id">
     <table class="dv-table" style="width:100%;border:1px solid #ccc;padding:5px;margin-top:5px;">
         <tr>
-            <td>OrderDate</td>
-            <td><input id="dt_box" class="easyui-datetimebox" name="OrderTime" type="datetime" style="width:200px"></td>
+            <td>@Html.LabelFor(x=>x.OrderDate)</td>
+            @*<td><input id="dt_box" class="easyui-datetimebox" name="OrderTime" type="datetime" style="width:200px"></td>old fashioned*@
+            <td>@Html.TextBoxFor(x => x.OrderDate, new { @class = "easyui-datetimebox", style = "width:200px" })
+           
+            </td>
             <td>Status</td>
-            <td><input name="Status" type="text" value="@Model.Status" class="easyui-validatebox"  style="width:100px"></td>
+            <td>
+            @if (Model.Status.Trim() == "Pending")
+            {
+                @Html.RadioButtonFor(x => x.Status, "P", new {@checked="checked" })<text>Pending</text>
+            }
+            else
+            {
+                @Html.RadioButtonFor(x => x.Status, "P", new { style = "width:100px" })<text>Pending</text>
+            }
+            
+            @Html.RadioButtonFor(x => x.Status, "Cancelled", new { style = "width:100px" })<text>Cancelled</text>
+            @Html.RadioButtonFor(x => x.Status, "Delivered", new { style = "width:100px" })<text>Delivered</text></td>
         </tr>
         <tr>
             <td>CustomerName</td>
             <td colspan="3">
-                <select name="CustomerId">
+                @*<select name="CustomerId">
                     @foreach (MyCustomer customer in ViewBag.Customer_list as List<MyCustomer>)
                     {
                         if (customer.Id == Model.MyCustomer.Id)
@@ -30,20 +56,24 @@
 
                     }
 
-                </select>
+                </select>Old fashioned*@
+
+                @Html.DropDownListFor(x => x.CustomerId, ViewBag.sl as IEnumerable<SelectListItem>)
             </td>
         </tr>
     </table>
     <div style="padding:5px 0;text-align:right;padding-right:30px">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="save()">Save</a>
+        @*<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="save()">Save</a>*@
+        <input type="submit" class="easyui-linkbutton" iconcls="icon-save" plain="true">
         <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="cancelItem(@ViewBag.Index)">Cancel</a>
     </div>
-</form>
-<script type="text/javascript">
-    function save() {
-
-        $("#order_detail").submit();
+        @Html.ValidationSummary()
     }
+<script type="text/javascript">
+    //function save() {
+
+    //    $("#order_detail").submit();
+    //}
     
 
 

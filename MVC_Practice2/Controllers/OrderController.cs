@@ -68,22 +68,45 @@ namespace MVC_Practice2.Controllers
             List<MyCustomer> customer_list=(from y in db.MyCustomers select y).ToList();
             ViewBag.Customer_list = customer_list;
             ViewBag.Index = Request.Params["index"];
+
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach(var i in customer_list)
+            {
+                items.Add(new SelectListItem{ 
+                    Value=i.Id.ToString(),
+                    Text=i.Name,
+                    Selected=false
+
+                });
+            }
+            //SelectList sl = new SelectList(items);
+
+            ViewBag.sl = items;
+            
             return View(target);
         }
-
-        public ActionResult Update()
+       [HttpPost]
+        public ActionResult Update(MyOrder model)
         {
-            int id =Convert.ToInt32(Request.Params["Id"]);
-            String datetime = Request.Params["OrderTime"];
-            
-            String status = Request.Params["Status"];
-            int customerId = Convert.ToInt32(Request.Params["CustomerId"]);
-            MyOrder updated_order=(from x in db.MyOrders where x.Id==id select x).FirstOrDefault();
-            updated_order.OrderDate = Convert.ToDateTime(datetime);
-            updated_order.Status = status;
-            updated_order.CustomerId = customerId;
-            db.SaveChanges();
-            return Redirect("/Order/Index");
+            if (ModelState.IsValid == false)
+            {
+                return Content("数据有误~！请不要恶意禁用浏览器脚本~~~！");
+            }
+            else
+            {
+                int id = Convert.ToInt32(Request.Params["Id"]);
+                String datetime = Request.Params["OrderDate"];
+
+                String status = Request.Params["Status"];
+                int customerId = Convert.ToInt32(Request.Params["CustomerId"]);
+                MyOrder updated_order = (from x in db.MyOrders where x.Id == id select x).FirstOrDefault();
+                updated_order.OrderDate = Convert.ToDateTime(datetime);
+                updated_order.Status = status;
+                updated_order.CustomerId = customerId;
+                db.SaveChanges();
+                return Redirect("/Order/Index");
+            }
+
 
 
 

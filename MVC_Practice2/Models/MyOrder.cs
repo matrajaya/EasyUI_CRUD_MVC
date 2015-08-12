@@ -11,11 +11,17 @@ namespace MVC_Practice2.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
     
     public partial class MyOrder
     {
         public int Id { get; set; }
+        
+        [DisplayName("高端时间")]
+        [Required(ErrorMessage = "不能为空")]
         public System.DateTime OrderDate { get; set; }
+        
         public string Status { get; set; }
         public int CustomerId { get; set; }
     
